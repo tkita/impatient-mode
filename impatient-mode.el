@@ -22,7 +22,7 @@
 
 ;; Except for html-mode buffers, buffers will be prettied up with
 ;; htmlize before being sent to clients. This can be toggled at any
-;; time with `imp-toggle-htmlize'.
+;; time with `imp-toggle-htmlize'
 
 ;; Because html-mode buffers are sent raw, you can use impatient-mode
 ;; see your edits to an HTML document live! This is perhaps the
@@ -47,12 +47,13 @@
 (defvar impatient-mode-map (make-sparse-keymap)
   "Keymap for impatient-mode.")
 
-(defvar impatient-mode-delayed-update 1
-  "Controls wether updates occur instantly upon keypresses or are delayed")
+(defvar impatient-mode-delay nil
+  "The delay in seconds between a keypress and the buffer being 
+   reloaded in the browser.  Set to nil for no delay")
 
 (make-variable-buffer-local
- (defvar imp--edit-timer nil
-   "A timer that goes off after 1 second of inactivity"))
+ (defvar imp-idle-timer nil
+   "A timer that goes off after impatient-mode-delay seconds of inactivity"))
 
 (make-variable-buffer-local
  (defvar imp-user-filter #'imp-htmlize-filter
@@ -233,23 +234,40 @@ buffer."
   (while imp-client-list
     (imp--send-state-ignore-errors (pop imp-client-list))))
 
+(defun imp--timer-delay-wrong ()
+  "Checks if the delay of imp-idle-timer differs from impatient-mode-delay"
+  (not (equal (timer--time imp-idle-timer) (seconds-to-time impatient-mode-delay))))
+
 (defun imp--on-change (&rest args)
   "Hook for after-change-functions."
-  (if impatient-mode-delayed-update
-      (progn
-	(if imp--edit-timer
-	    (cancel-timer imp--edit-timer))
-	(setq imp--edit-timer (run-at-time
-			       "1 sec"
-			       nil
-			       'imp--update-pages
-			       args)))
-    (imp--update-pages args)))
+  (if impatient-mode-delay
+      (if imp-idle-timer
+	  (if (imp--timer-delay-wrong)
+	      (timer-set-idle-time imp-idle-timer
+				   (seconds-to-time impatient-mode-delay)))
+	(setq imp-idle-timer (run-with-idle-timer
+			      (seconds-to-time impatient-mode-delay)
+			      0
+			      'imp--update-buffers
+			      args)))
+    (progn (if imp-idle-timer
+	       (progn (cancel-timer imp-idle-timer)
+		      (setq imp-idle-timer nil)))
+	   (imp--update-buffers))))
 
-(defun imp--update-pages (&rest args)
-  "Does the actual work of updating the buffers in the browser"
+(defun imp--after-timeout (&rest args)
+  "Executes after impatient-mode-delay seconds of idleness"
+  (if (not impatient-mode-delay)
+      (progn (cancel-timer imp-idle-timer)
+	     (setq imp-idle-timer nil))
+    (if (imp--timer-delay-wrong)
+	(timer-set-idle imp-idle-timer
+			(seconds-to-time impatient-mode-delay))
+        (imp--update-buffers))))
+
+(defun imp--update-buffers (&rest args)
+  "Updates all buffers in the browser"
   (cl-incf imp-last-state)
-
   ;; notify our clients
   (imp--notify-clients)
   ;; notify any clients that we're in the imp-related-files list for
