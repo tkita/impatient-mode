@@ -236,7 +236,7 @@ buffer."
 
 (defun imp--timer-delay-wrong ()
   "Checks if the delay of imp-idle-timer differs from impatient-mode-delay"
-  (not (equal (timer--time imp-idle-timer) (seconds-to-time impatient-mode-delay))))
+  (not (equal (timer--time imp-idle-timer) (seconds-to-time (float impatient-mode-delay)))))
 
 (defun imp--on-change (&rest args)
   "Hook for after-change-functions."
