@@ -1,8 +1,6 @@
 # Clone the two dependencies of this package in sibling directories:
-#   $ cd ..
-#   $ git clone https://github.com/hniksic/emacs-htmlize htmlize
-#   $ git clone https://github.com/skeeto/emacs-web-server simple-httpd
-#   $ cd -
+#   $ git clone https://github.com/hniksic/emacs-htmlize ../htmlize
+#   $ git clone https://github.com/skeeto/emacs-web-server ../simple-httpd
 #
 # Or set LDFLAGS to point at these packages elsewhere:
 #     $ make LDFLAGS='-L path/to/htmlize -L path/to/simple-httpd'
