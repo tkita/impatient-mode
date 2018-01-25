@@ -22,7 +22,7 @@
 
 ;; Except for html-mode buffers, buffers will be prettied up with
 ;; htmlize before being sent to clients. This can be toggled at any
-;; time with `imp-toggle-htmlize'
+;; time with `imp-toggle-htmlize'.
 
 ;; Because html-mode buffers are sent raw, you can use impatient-mode
 ;; see your edits to an HTML document live! This is perhaps the
@@ -48,28 +48,26 @@
   "Keymap for impatient-mode.")
 
 (defvar impatient-mode-delay nil
-  "The delay in seconds between a keypress and the buffer being 
+  "The delay in seconds between a keypress and the buffer being
    reloaded in the browser.  Set to nil for no delay")
 
-(make-variable-buffer-local
- (defvar imp-idle-timer nil
-   "A timer that goes off after impatient-mode-delay seconds of inactivity"))
+(defvar-local imp--idle-timer nil
+  "A timer that goes off after impatient-mode-delay seconds of inactivity")
 
-(make-variable-buffer-local
- (defvar imp-user-filter #'imp-htmlize-filter
-   "Per buffer html-producing function by user."))
+(defvar-local imp-user-filter #'imp-htmlize-filter
+  "Per buffer html-producing function by user.")
 
-(make-variable-buffer-local
- (defvar imp-client-list ()
-   "List of client processes watching the current buffer."))
+(defvar-local imp-client-list ()
+  "List of client processes watching the current buffer.")
 
-(make-variable-buffer-local
- (defvar imp-last-state 0
-   "State sequence number."))
+(defvar-local imp-last-state 0
+  "State sequence number.")
 
-(make-variable-buffer-local
- (defvar imp-related-files nil
-   "Files that seem to be related to this buffer"))
+(defvar-local imp-related-files nil
+  "Files that seem to be related to this buffer")
+
+(defvar-local imp--buffer-dirty-p nil
+  "If non-nil, buffer has been modified but not sent to clients.")
 
 (defvar imp-default-user-filters
   '((html-mode . nil)
@@ -234,39 +232,42 @@ buffer."
   (while imp-client-list
     (imp--send-state-ignore-errors (pop imp-client-list))))
 
-(defun imp--timer-delay-wrong ()
-  "Checks if the delay of imp-idle-timer differs from impatient-mode-delay"
-  (not (equal (timer--time imp-idle-timer) (seconds-to-time (float impatient-mode-delay)))))
+(defun imp--start-idle-timer ()
+  "Start/update the idle timer as appropriate."
+  (cond
+   ;; Timer doesn't exist and shouldn't (do nothing)
+   ((and (null impatient-mode-delay) (null imp--idle-timer)))
+   ;; Timer exists when it shouldnt
+   ((and (null impatient-mode-delay) imp--idle-timer)
+    (cancel-timer (cdr imp--idle-timer))
+    (setf imp--idle-timer nil))
+   ;; Timer doesn't exist when it should
+   ((and impatient-mode-delay (null imp--idle-timer))
+    (let ((timer (run-with-idle-timer
+                  impatient-mode-delay :repeat #'imp--after-timeout)))
+      (setf imp--idle-timer (cons impatient-mode-delay timer))))
+   ;; Timer delay is incorrect
+   ((not (eql (car imp--idle-timer) impatient-mode-delay))
+    (timer-set-idle-time (cdr imp--idle-timer)
+                         impatient-mode-delay
+                         :repeat))))
 
-(defun imp--on-change (&rest args)
-  "Hook for after-change-functions."
+(defun imp--on-change (&rest _)
+  "Hook for `after-change-functions'."
+  (imp--start-idle-timer)
   (if impatient-mode-delay
-      (if imp-idle-timer
-	  (if (imp--timer-delay-wrong)
-	      (timer-set-idle-time imp-idle-timer
-				   (seconds-to-time impatient-mode-delay)))
-	(setq imp-idle-timer (run-with-idle-timer
-			      (seconds-to-time impatient-mode-delay)
-			      0
-			      'imp--update-buffers
-			      args)))
-    (progn (if imp-idle-timer
-	       (progn (cancel-timer imp-idle-timer)
-		      (setq imp-idle-timer nil)))
-	   (imp--update-buffers))))
+      (setf imp--buffer-dirty-p :dirty)
+    (imp--update-buffer)))
 
-(defun imp--after-timeout (&rest args)
+(defun imp--after-timeout ()
   "Executes after impatient-mode-delay seconds of idleness"
-  (if (not impatient-mode-delay)
-      (progn (cancel-timer imp-idle-timer)
-	     (setq imp-idle-timer nil))
-    (if (imp--timer-delay-wrong)
-	(timer-set-idle imp-idle-timer
-			(seconds-to-time impatient-mode-delay))
-        (imp--update-buffers))))
+  (when imp--buffer-dirty-p
+    (imp--update-buffer))
+  (imp--start-idle-timer))
 
-(defun imp--update-buffers (&rest args)
-  "Updates all buffers in the browser"
+(defun imp--update-buffer ()
+  "Update this buffer in the browser."
+  (setf imp--buffer-dirty-p nil)
   (cl-incf imp-last-state)
   ;; notify our clients
   (imp--notify-clients)
@@ -274,9 +275,8 @@ buffer."
   (let ((buffer-file (buffer-file-name (current-buffer))))
     (dolist (buffer (imp--buffer-list))
       (with-current-buffer buffer
-	(when (member buffer-file imp-related-files)
-	  (imp--notify-clients)))))
-  (setq imp--edit-timer nil))
+        (when (member buffer-file imp-related-files)
+          (imp--notify-clients))))))
 
 (defun httpd/imp/buffer (proc path query &rest args)
   "Servlet that accepts long poll requests."
