@@ -1,35 +1,34 @@
-EMACS   ?= emacs
-CASK    ?= cask
-VIRTUAL := $(CASK) exec $(EMACS)
-BATCH   := $(VIRTUAL) -batch -Q -L .
+# Clone the two dependencies of this package in sibling directories:
+#   $ cd ..
+#   $ git clone https://github.com/hniksic/emacs-htmlize htmlize
+#   $ git clone https://github.com/skeeto/emacs-web-server simple-httpd
+#   $ cd -
+#
+# Or set LDFLAGS to point at these packages elsewhere:
+#     $ make LDFLAGS='-L path/to/htmlize -L path/to/simple-httpd'
+.POSIX:
+.SUFFIXES: .el .elc
+EMACS   = emacs
+LDFLAGS = -L ../simple-httpd -L ../htmlize
+VERSION = 1.0.0
 
-PACKAGE := impatient-mode
-VERSION := $(shell $(CASK) version)
+DIST = README.md loading.html jquery.js index.html
 
-EL = impatient-mode.el
-ELC = $(EL:.el=.elc)
-EXTRA_DIST = README.md loading.html jquery.js index.html
+all: compile
 
-.PHONY : all compile package clean
+compile: impatient-mode.elc
 
-all : compile package
+package: impatient-mode-$(VERSION).tar
 
-.cask : Cask
-	cask install
-	touch .cask
-
-compile: .cask $(ELC)
-
-package : $(PACKAGE)-$(VERSION).tar
-
-$(PACKAGE)-pkg.el : Cask
-	$(CASK) package
-
-$(PACKAGE)-$(VERSION).tar : $(EL) $(PACKAGE)-pkg.el $(EXTRA_DIST)
-	tar -cf $@ --transform "s,^,$(PACKAGE)-$(VERSION)/," $^
+impatient-mode-$(VERSION).tar: impatient-mode.el $(DIST)
+	rm -rf impatient-mode-$(VERSION)/
+	mkdir impatient-mode-$(VERSION)/
+	cp impatient-mode.el $(DIST) impatient-mode-$(VERSION)/
+	tar cf $@ impatient-mode-$(VERSION)/
+	rm -rf impatient-mode-$(VERSION)/
 
 clean:
-	$(RM) *.tar *.elc $(PACKAGE)-pkg.el
+	rm -f impatient-mode-$(VERSION).tar impatient-mode.elc
 
-%.elc: %.el
-	$(BATCH) -f batch-byte-compile $<
+.el.elc:
+	$(EMACS) -Q -batch $(LDFLAGS) -f batch-byte-compile $<
