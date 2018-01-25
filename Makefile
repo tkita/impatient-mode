@@ -30,5 +30,10 @@ impatient-mode-$(VERSION).tar: impatient-mode.el $(DIST)
 clean:
 	rm -f impatient-mode-$(VERSION).tar impatient-mode.elc
 
+run: impatient-mode.elc
+	$(EMACS) -Q $(LDFLAGS) -l impatient-mode.elc \
+		 impatient-mode.el \
+		 -f impatient-mode -f httpd-start
+
 .el.elc:
 	$(EMACS) -Q -batch $(LDFLAGS) -f batch-byte-compile $<
