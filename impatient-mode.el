@@ -127,6 +127,8 @@ buffer."
 (defun imp-visit-buffer ()
   "Visit the buffer in a browser."
   (interactive)
+  (unless (process-status "httpd")
+    (httpd-start))
   (impatient-mode)
   (browse-url
    (format "http://%s:%d/imp/live/%s/"
