@@ -124,15 +124,18 @@ buffer."
       (imp-set-user-filter nil)
     (imp-set-user-filter 'imp-htmlize-filter)))
 
-(defun imp-visit-buffer ()
+(defun imp-visit-buffer (arg)
   "Visit the buffer in a browser."
-  (interactive)
+  (interactive "P")
   (unless (process-status "httpd")
     (httpd-start))
-  (impatient-mode)
-  (browse-url
-   (format "http://%s:%d/imp/live/%s/"
-           (system-name) httpd-port (url-hexify-string (buffer-name)))))
+  (unless impatient-mode
+    (impatient-mode))
+  (let ((url (if arg
+		 (format "http://%s:%d/imp/" (system-name) httpd-port)
+	       (format "http://%s:%d/imp/live/%s/"
+		       (system-name) httpd-port (url-hexify-string (buffer-name))))))
+    (browse-url url)))
 
 (defun imp-buffer-enabled-p (buffer)
   "Return t if buffer has impatient-mode enabled."
