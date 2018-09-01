@@ -132,11 +132,9 @@ If given a prefix argument, visit the buffer listing instead."
     (httpd-start))
   (unless impatient-mode
     (impatient-mode))
-  (let ((url (if arg
-                 (format "http://%s:%d/imp/" (system-name) httpd-port)
-               (format "http://%s:%d/imp/live/%s/"
-                       (system-name) httpd-port
-                       (url-hexify-string (buffer-name))))))
+  (let ((url (format "http://%s:%d/imp/" (system-name) httpd-port)))
+    (unless arg
+      (setq url (format "%slive/%s/" url (url-hexify-string (buffer-name)))))
     (browse-url url)))
 
 (defun imp-buffer-enabled-p (buffer)
