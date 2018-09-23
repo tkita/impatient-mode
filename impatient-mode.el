@@ -5,7 +5,7 @@
 ;; Author: Brian Taylor <el.wubo@gmail.com>
 ;; Version: 1.1
 ;; URL: https://github.com/netguy204/imp.el
-;; Package-Requires: ((cl-lib "0.3") (simple-httpd "1.4.0") (htmlize "1.40"))
+;; Package-Requires: ((cl-lib "0.3") (simple-httpd "1.5.0") (htmlize "1.40"))
 
 ;;; Commentary:
 
@@ -182,7 +182,8 @@ If given a prefix argument, visit the buffer listing instead."
 (defun httpd/imp/live (proc path _query req)
   "Serve up the shim that lets us watch a buffer change"
   (let* ((index (expand-file-name "index.html" imp-shim-root))
-         (parts (cdr (split-string path "/")))
+         (decoded (url-unhex-string path))
+         (parts (cdr (split-string decoded "/")))
          (buffer-name (nth 2 parts))
          (file (httpd-clean-path (mapconcat 'identity (nthcdr 3 parts) "/")))
          (buffer (get-buffer buffer-name))
@@ -190,8 +191,8 @@ If given a prefix argument, visit the buffer listing instead."
          (buffer-dir (and buffer-file (file-name-directory buffer-file))))
 
     (cond
-     ((equal (file-name-directory path) "/imp/live/")
-      (httpd-redirect proc (concat path "/")))
+     ((equal (file-name-directory decoded) "/imp/live/")
+      (httpd-redirect proc (concat decoded "/")))
      ((not (imp-buffer-enabled-p buffer)) (imp--private proc buffer-name))
      ((and (not (string= file "./")) buffer-dir)
       (let* ((full-file-name (expand-file-name file buffer-dir))
@@ -204,7 +205,7 @@ If given a prefix argument, visit the buffer listing instead."
         (if live-buffer
             (with-temp-buffer
               (insert-buffer-substring (cl-first live-buffer))
-              (if (imp--should-not-cache-p path)
+              (if (imp--should-not-cache-p decoded)
                   (httpd-send-header proc mime-type 200
                                      :Cache-Control "no-cache")
                 (httpd-send-header proc mime-type 200
@@ -299,7 +300,8 @@ If given a prefix argument, visit the buffer listing instead."
 
 (defun httpd/imp/buffer (proc path query &rest _)
   "Servlet that accepts long poll requests."
-  (let* ((buffer-name (file-name-nondirectory path))
+  (let* ((decoded (url-unhex-string path))
+         (buffer-name (file-name-nondirectory decoded))
          (buffer (get-buffer buffer-name))
          (req-last-id (string-to-number (or (cadr (assoc "id" query)) "0"))))
     (if (imp-buffer-enabled-p buffer)
