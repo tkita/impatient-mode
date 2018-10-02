@@ -70,7 +70,8 @@
   "If non-nil, buffer has been modified but not sent to clients.")
 
 (defvar imp-default-user-filters
-  '((html-mode . nil)
+  '((mhtml-mode . nil)
+    (html-mode . nil)
     (web-mode  . nil))
   "Alist indicating which filter should be used for which modes.")
 
