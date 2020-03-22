@@ -40,7 +40,7 @@
 (require 'simple-httpd)
 (require 'htmlize)
 
-(defgroup impatient-mode nil
+(defgroup impatient nil
   "Serve buffers live over HTTP."
   :group 'comm)
 
@@ -78,7 +78,7 @@
 ;;;###autoload
 (define-minor-mode impatient-mode
   "Serves the buffer live over HTTP."
-  :group 'impatient-mode
+  :group 'impatient
   :lighter " imp"
   :keymap impatient-mode-map
   (if (not impatient-mode)
