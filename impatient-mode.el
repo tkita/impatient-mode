@@ -50,6 +50,13 @@ Set to nil for no delay"
   :group 'impatient
   :type 'boolean)
 
+(defcustom imp-default-user-filters '((mhtml-mode . nil)
+                                      (html-mode . nil)
+                                      (web-mode  . nil))
+  "Alist indicating which filter should be used for which modes."
+  :group 'impatient
+  :type 'sexp)
+
 (defvar-local imp--idle-timer nil
   "A timer that goes off after `impatient-mode-delay' seconds of inactivity")
 
@@ -67,12 +74,6 @@ Set to nil for no delay"
 
 (defvar-local imp--buffer-dirty-p nil
   "If non-nil, buffer has been modified but not sent to clients.")
-
-(defvar imp-default-user-filters
-  '((mhtml-mode . nil)
-    (html-mode . nil)
-    (web-mode  . nil))
-  "Alist indicating which filter should be used for which modes.")
 
 (defvar impatient-mode-map (make-sparse-keymap)
   "Keymap for impatient-mode.")
