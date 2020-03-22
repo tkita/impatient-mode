@@ -44,9 +44,11 @@
   "Serve buffers live over HTTP."
   :group 'comm)
 
-(defvar impatient-mode-delay nil
+(defcustom impatient-mode-delay nil
   "The delay in seconds between a keypress and the browser reload.
-Set to nil for no delay")
+Set to nil for no delay"
+  :group 'impatient
+  :type 'boolean)
 
 (defvar-local imp--idle-timer nil
   "A timer that goes off after `impatient-mode-delay' seconds of inactivity")
