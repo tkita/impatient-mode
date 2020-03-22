@@ -44,9 +44,6 @@
   "Serve buffers live over HTTP."
   :group 'comm)
 
-(defvar impatient-mode-map (make-sparse-keymap)
-  "Keymap for impatient-mode.")
-
 (defvar impatient-mode-delay nil
   "The delay in seconds between a keypress and the browser reload.
 Set to nil for no delay")
@@ -74,6 +71,9 @@ Set to nil for no delay")
     (html-mode . nil)
     (web-mode  . nil))
   "Alist indicating which filter should be used for which modes.")
+
+(defvar impatient-mode-map (make-sparse-keymap)
+  "Keymap for impatient-mode.")
 
 ;;;###autoload
 (define-minor-mode impatient-mode
