@@ -48,8 +48,8 @@
   "Keymap for impatient-mode.")
 
 (defvar impatient-mode-delay nil
-  "The delay in seconds between a keypress and the buffer being
-   reloaded in the browser.  Set to nil for no delay")
+  "The delay in seconds between a keypress and the browser reload.
+Set to nil for no delay")
 
 (defvar-local imp--idle-timer nil
   "A timer that goes off after `impatient-mode-delay' seconds of inactivity")
@@ -93,7 +93,7 @@
   "Location of data files needed by impatient-mode.")
 
 (defun imp-set-user-filter (fn)
-  "Sets a FN as user-defined filter for this buffer.
+  "Set a FN as user-defined filter for this buffer.
 FUNCTION should accept one argument, the buffer to be filtered,
 and will be evaluated with the output buffer set as the current
 buffer."
@@ -103,7 +103,7 @@ buffer."
   (imp--notify-clients))
 
 (defun imp-remove-user-filter ()
-  "Sets the user-defined filter for this buffer to the default."
+  "Set the user-defined filter for this buffer to the default."
   (interactive)
   (let ((lookup (assoc major-mode imp-default-user-filters)))
     (if lookup
@@ -113,7 +113,7 @@ buffer."
   (imp--notify-clients))
 
 (defun imp-htmlize-filter (buffer)
-  "Htmlization of buffers before sending to clients."
+  "Htmlize BUFFER before sending to clients."
   (let ((html-buffer (save-match-data (htmlize-buffer buffer))))
     (insert-buffer-substring html-buffer)
     (kill-buffer html-buffer)))
@@ -127,7 +127,7 @@ buffer."
 
 (defun imp-visit-buffer (&optional arg)
   "Visit the current buffer in a browser.
-If given a prefix argument, visit the buffer listing instead."
+If given a prefix ARG, visit the buffer listing instead."
   (interactive "P")
   (unless (process-status "httpd")
     (httpd-start))
@@ -139,15 +139,15 @@ If given a prefix argument, visit the buffer listing instead."
     (browse-url url)))
 
 (defun imp-buffer-enabled-p (buffer)
-  "Return t if buffer has impatient-mode enabled."
+  "Return t if BUFFER has impatient-mode enabled."
   (and buffer (with-current-buffer (get-buffer buffer) impatient-mode)))
 
 (defun imp--buffer-list ()
-  "List of all buffers with impatient-mode enabled"
+  "List of all buffers with impatient-mode enabled."
   (cl-remove-if-not 'imp-buffer-enabled-p (buffer-list)))
 
 (defun imp--should-not-cache-p (path)
-  "True if the path should be stamped with a no-cache header"
+  "True if the PATH should be stamped with a no-cache header."
   (let ((mime-type (httpd-get-mime (file-name-extension path))))
     (member mime-type '("text/css" "text/html" "text/xml"
                         "text/plain" "text/javascript"))))
@@ -181,7 +181,7 @@ If given a prefix argument, visit the buffer listing instead."
                (format "Buffer %s is private or doesn't exist." buffer-name)))
 
 (defun httpd/imp/live (proc path _query req)
-  "Serve up the shim that lets us watch a buffer change"
+  "Serve up the shim that lets us watch a buffer change."
   (let* ((index (expand-file-name "index.html" imp-shim-root))
          (decoded (url-unhex-string path))
          (parts (cdr (split-string decoded "/")))
@@ -281,7 +281,7 @@ If given a prefix argument, visit the buffer listing instead."
     (imp--update-buffer)))
 
 (defun imp--after-timeout ()
-  "Executes after `impatient-mode-delay' seconds of idleness"
+  "Execute after `impatient-mode-delay' seconds of idleness."
   (when imp--buffer-dirty-p
     (imp--update-buffer))
   (imp--start-idle-timer))
