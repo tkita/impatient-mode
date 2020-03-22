@@ -5,7 +5,7 @@
 ;; Author: Brian Taylor <el.wubo@gmail.com>
 ;; Version: 1.1
 ;; URL: https://github.com/netguy204/imp.el
-;; Package-Requires: ((cl-lib "0.3") (simple-httpd "1.5.0") (htmlize "1.40"))
+;; Package-Requires: ((emacs "24.1") (simple-httpd "1.5.0") (htmlize "1.40"))
 
 ;;; Commentary:
 
