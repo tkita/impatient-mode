@@ -136,7 +136,16 @@ If given a prefix ARG, visit the buffer listing instead."
     (httpd-start))
   (unless impatient-mode
     (impatient-mode))
-  (let ((url (format "http://%s:%d/imp/" (system-name) httpd-port)))
+  (let* ((proc (get-process "httpd"))
+         (proc-info (process-contact proc t))
+         (raw-host (plist-get proc-info :host))
+         (host (if (member raw-host
+                           '(nil local "127.0.0.1" "::1" "0.0.0.0" "::"))
+                   "localhost"
+                 raw-host))
+         (local-addr (plist-get proc-info :local))
+         (port (aref local-addr (1- (length local-addr))))
+         (url (format "http://%s:%d/imp/" host port)))
     (unless arg
       (setq url (format "%slive/%s/" url (url-hexify-string (buffer-name)))))
     (browse-url url)))
