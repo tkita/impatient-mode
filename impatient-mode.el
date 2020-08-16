@@ -225,7 +225,7 @@ If given a prefix ARG, visit the buffer listing instead."
                                    :Cache-Control
                                    "max-age=60, must-revalidate")))
           (httpd-send-file proc full-file-name req))))
-     (t (imp-buffer-enabled-p buffer) (httpd-send-file proc index req)))))
+     (t (httpd-send-file proc index req)))))
 
 (defun httpd/imp (proc path &rest _)
   (cond
