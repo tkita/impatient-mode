@@ -163,7 +163,13 @@ If given a prefix ARG, visit the buffer listing instead."
          (url (format "http://%s:%d/imp/" host port)))
     (unless arg
       (setq url (format "%slive/%s/" url (url-hexify-string (buffer-name)))))
-    (browse-url url)))
+    (if (and window-system
+             (featurep 'xwidget-internal))
+        (let ((win (selected-window)))
+          (select-window (split-window-horizontally))
+          (xwidget-webkit-browse-url url)
+          (select-window win))
+      (browse-url url))))
 
 (defun imp-buffer-enabled-p (buffer)
   "Return t if BUFFER has impatient-mode enabled."
