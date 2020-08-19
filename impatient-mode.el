@@ -52,7 +52,8 @@ Set to nil for no delay"
 
 (defcustom imp-default-user-filters '((mhtml-mode . nil)
                                       (html-mode . nil)
-                                      (web-mode  . nil))
+                                      (web-mode . nil)
+                                      (markdown-mode . imp-markdown-filter))
   "Alist indicating which filter should be used for which modes."
   :group 'impatient
   :type 'sexp)
@@ -120,6 +121,20 @@ buffer."
   (let ((html-buffer (save-match-data (htmlize-buffer buffer))))
     (princ (with-current-buffer html-buffer (buffer-string)))
     (kill-buffer html-buffer)))
+
+(defun imp-markdown-filter (buffer)
+  ;; marked.min.js ... https://github.com/markedjs/marked
+  ;; github-markdown.min.css ... https://github.com/sindresorhus/github-markdown-css
+  (princ (with-current-buffer buffer
+           (format "<!DOCTYPE html><html>
+<head><script src=\"/imp/static/marked.min.js\"></script>
+<link rel=\"stylesheet\" href=\"/imp/static/github-markdown.css\"></head>
+<body><div id=\"marked\" class=\"markdown-body\"></div>
+<div id=\"buffer\" style=\"display:none;\">%s</div>
+<script>document.getElementById('marked').innerHTML=marked(document.getElementById('buffer').textContent);</script>
+</body></html>"
+                   (buffer-substring-no-properties (point-min) (point-max))))
+         (current-buffer)))
 
 (defun imp-toggle-htmlize ()
   "Toggle htmlize of buffer."
