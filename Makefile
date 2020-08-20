@@ -6,9 +6,11 @@
 #     $ make LDFLAGS='-L path/to/htmlize -L path/to/simple-httpd'
 .POSIX:
 .SUFFIXES: .el .elc
+CURL    = curl -L -o
 EMACS   = emacs
 LDFLAGS = -L ../simple-httpd -L ../htmlize
 VERSION = 1.1
+GITHUB  = https://raw.githubusercontent.com
 
 DIST = README.md loading.html jquery.js index.html
 
@@ -35,3 +37,8 @@ run: impatient-mode.elc
 
 .el.elc:
 	$(EMACS) -Q -batch $(LDFLAGS) -f batch-byte-compile $<
+
+get:
+	$(CURL) github-markdown.css $(GITHUB)/sindresorhus/github-markdown-css/gh-pages/github-markdown.css
+	$(CURL) marked.min.js $(GITHUB)/markedjs/marked/master/marked.min.js
+	$(CURL) simple-httpd.el $(GITHUB)/skeeto/emacs-web-server/master/simple-httpd.el
