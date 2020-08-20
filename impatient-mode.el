@@ -124,7 +124,7 @@ buffer."
 
 (defun imp-markdown-filter (buffer)
   ;; marked.min.js ... https://github.com/markedjs/marked
-  ;; github-markdown.min.css ... https://github.com/sindresorhus/github-markdown-css
+  ;; github-markdown.css ... https://github.com/sindresorhus/github-markdown-css
   (princ (with-current-buffer buffer
            (format "<!DOCTYPE html><html>
 <head><script src=\"/imp/static/marked.min.js\"></script>
@@ -333,6 +333,7 @@ If given a prefix ARG, visit the buffer listing instead."
         (when (member buffer-file imp-related-files)
           (imp--notify-clients))))))
 
+;; Called from Javascript function refresh().
 (defun httpd/imp/buffer (proc path query &rest _)
   "Servlet that accepts long poll requests."
   (let* ((decoded (url-unhex-string path))
