@@ -5,7 +5,7 @@
 ;; Author: Brian Taylor <el.wubo@gmail.com>
 ;; Version: 1.1
 ;; URL: https://github.com/netguy204/imp.el
-;; Package-Requires: ((emacs "24.3") (simple-httpd "1.5.0") (htmlize "1.40"))
+;; Package-Requires: ((emacs "24.3") (simple-httpd "1.5.0"))
 
 ;;; Commentary:
 
@@ -20,14 +20,6 @@
 
 ;;   http://localhost:8080/imp/
 
-;; Except for html-mode buffers, buffers will be prettied up with
-;; htmlize before being sent to clients.  This can be toggled at any
-;; time with `imp-toggle-htmlize'.
-
-;; Because html-mode buffers are sent raw, you can use impatient-mode
-;; see your edits to an HTML document live! This is perhaps the
-;; primary motivation of this mode.
-
 ;; To receive updates the browser issues a long poll on the client
 ;; waiting for the buffer to change -- server push.  The response
 ;; happens in an `after-change-functions' hook.  Buffers that do not
@@ -38,7 +30,6 @@
 (require 'cl-lib)
 (require 'url-util)
 (require 'simple-httpd)
-(require 'htmlize)
 
 (defgroup impatient nil
   "Serve buffers live over HTTP."
@@ -60,9 +51,6 @@ Set to nil for no delay"
 
 (defvar-local imp--idle-timer nil
   "A timer that goes off after `impatient-mode-delay' seconds of inactivity")
-
-(defvar-local imp-user-filter #'imp-htmlize-filter
-  "Per buffer html-producing function by user.")
 
 (defvar-local imp-client-list ()
   "List of client processes watching the current buffer.")
@@ -116,24 +104,11 @@ buffer."
   (cl-incf imp-last-state)
   (imp--notify-clients))
 
-(defun imp-htmlize-filter (buffer)
-  "Htmlize BUFFER before sending to clients."
-  (let ((html-buffer (save-match-data (htmlize-buffer buffer))))
-    (princ (with-current-buffer html-buffer (buffer-string)))
-    (kill-buffer html-buffer)))
-
 (defun imp-markdown-filter (buffer)
   (princ
    (with-current-buffer buffer
      (buffer-substring-no-properties (point-min) (point-max)))
    (current-buffer)))
-
-(defun imp-toggle-htmlize ()
-  "Toggle htmlize of buffer."
-  (interactive)
-  (if (eq imp-user-filter 'imp-htmlize-filter)
-      (imp-set-user-filter nil)
-    (imp-set-user-filter 'imp-htmlize-filter)))
 
 (defun imp-visit-buffer (&optional arg)
   "Visit the current buffer in a browser.
