@@ -21,17 +21,7 @@ var frameToDocument = function( iframe ) {
 };
 
 var printIframe = function( data ) {
-    var iframeJQ = $( '#content' );
-    var doc = frameToDocument( iframeJQ[0] );
-    var iwindow = iframeJQ[0].contentWindow;
-    var offX = iwindow.pageXOffset, offY = iwindow.pageYOffset;
-    /* if (offY && offY >= $(doc.body).height() - $(iwindow).height()) {
-     *     offY = null; // follow the end of the buffer
-     * } */
-    doc.open();
-    doc.write( data );
-    doc.close();
-    // iwindow.scrollTo(offX, offY != null ? offY : $(doc.body).height());
+    document.getElementById( 'marked' ).innerHTML = marked( data );
 };
 
 var setIframe = function( count, newText ) {

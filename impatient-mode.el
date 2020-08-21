@@ -123,18 +123,10 @@ buffer."
     (kill-buffer html-buffer)))
 
 (defun imp-markdown-filter (buffer)
-  ;; marked.min.js ... https://github.com/markedjs/marked
-  ;; github-markdown.css ... https://github.com/sindresorhus/github-markdown-css
-  (princ (with-current-buffer buffer
-           (format "<!DOCTYPE html><html>
-<head><script src=\"/imp/static/marked.min.js\"></script>
-<link rel=\"stylesheet\" href=\"/imp/static/github-markdown.css\"></head>
-<body><div id=\"marked\" class=\"markdown-body\"></div>
-<div id=\"buffer\" style=\"display:none;\">%s</div>
-<script>document.getElementById('marked').innerHTML=marked(document.getElementById('buffer').textContent);</script>
-</body></html>"
-                   (buffer-substring-no-properties (point-min) (point-max))))
-         (current-buffer)))
+  (princ
+   (with-current-buffer buffer
+     (buffer-substring-no-properties (point-min) (point-max)))
+   (current-buffer)))
 
 (defun imp-toggle-htmlize ()
   "Toggle htmlize of buffer."
