@@ -2,3 +2,6 @@
 *.tar
 *-pkg.el
 .cask
+github-markdown.css
+marked.min.js
+simple-httpd.el
