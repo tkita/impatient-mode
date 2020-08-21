@@ -1,97 +1,47 @@
 Impatient Mode
 ==============
 
-See the effect of your HTML as you type it.
+_This version is for markdown only._
 
- * [YouTube demo](http://youtu.be/QV6XVyXjBO8)
+## Installation
 
-Installation through MELPA
---------------------------
+This version requires _simple-httpd.el_ , _marked.js_ , and _github-markdown.css_ .
+Put follow files in the same directory.
 
-The easiest way to get up and running with _impatient-mode_ is to
-install it through [MELPA](http://melpa.milkbox.net/). If you're not
-already using MELPA,
-[it's quite easy to setup.](http://melpa.milkbox.net/#installing)
+- simple-httpd.el
 
-Installation from Source
-------------------------
+  * https://github.com/skeeto/emacs-http-server
 
-If you are installing from source, please note that this package
-requires both _simple-httpd_ and _htmlize_ in order to operate. The
-_simple-httpd_ webserver runs within emacs to serve up your buffers as
-you edit them. _htmlize_ is used to send font lock highlighting to
-clients for non-HTML buffers.
+- marked.js
 
-_simple-httpd_ can be installed through MELPA or directly from GitHub.
+  * https://github.com/markedjs/marked
 
- * http://melpa.milkbox.net/
- * https://github.com/skeeto/emacs-http-server
+- github-markdown.css
 
-_htmlize_ is also available through MELPA.
+  * https://github.com/sindresorhus/github-markdown-css
 
-Once you have installed _simple-httpd_ and _htmlize_ and you've cloned
-_impatient-mode_, you can add _impatient-mode_ to your load path and
-require it:
+or, you can use _get_ target in _make_ command.
 
-```el
-(add-to-list 'load-path "~/.emacs.d/impatient-mode")
-(require 'impatient-mode)
-```
+  ```shell
+  $ make get
+  ```
 
-Using _impatient-mode_
-----------------------
+you can add _impatient-mode_ to your load path and require it:
 
-Enable the web server provided by _simple-httpd_:
+  ```el
+  (add-to-list 'load-path "~/.emacs.d/impatient-mode")
+  (require 'impatient-mode)
+  ```
 
-```el
-M-x httpd-start
-```
+## Using _impatient-mode_
 
-Publish buffers by enabling the minor mode `impatient-mode`.
+* Open markdown file with emacs, and edit buffer.
 
-```
-M-x impatient-mode
-```
+* Publish buffers for preview,
 
-And then point your browser to http://localhost:8080/imp/, select a
-buffer, and watch your changes appear as you type!
+ ```el
+ M-x imp-visit-buffer
+ ```
+ previewed in web browser specified by variable `browse-url-browser-function`.
 
-If you are editing HTML that references resources in other files (like
-CSS) you can enable impatient-mode on those buffers as well. This will
-cause your browser to live refresh the page when you edit a referenced
-resource.
-
-Except for `html-mode` buffers, buffer contents will be run through
-a user-defined filter. The default user filter is `htmlize`, but you can set your own with `imp-set-user-filter`. The user filter is nothing but a regular elisp function. Here's how you would define a basic filter:
-
-```el
-(defun my-filter (_)
-  (princ "<html><body>test</body></html>" (current-buffer)))
-```
-
-The original editing buffer is passed along the user filter as a parameter, which we didn't use in the previous example, but which is demonstrated in the following example:
-
-```el
-(defun my-filter (buffer)
-  (let ((count 
-     (with-current-buffer buffer
-           (count-words-region (point-min) (point-max)))))
-    (princ (format "<html><body>%d</body></html>" count) (current-buffer))))
-```
-
-You can remove user filters with `imp-remove-user-filter`, which will reset the default `htmlize`. For reference, this is how the default user function is defined:
-
-```el
-(defun default-user-filter (buffer)
-  "Htmlization of buffers before sending to clients."
-  (let ((html-buffer (save-match-data (htmlize-buffer buffer))))
-    (princ (with-current-buffer html-buffer (buffer-string)))
-    (kill-buffer html-buffer)))
-```
-
-Security implications
----------------------
-
-Please be aware that enabling `impatient-mode` exposes the whole directory in which the file resides, not only the file itself. If our file is accessible under `http://localhost:8080/imp/live/example.txt/`, it is possible to access `http://localhost:8080/imp/live/example.txt/a-file-in-the-same-directory/or-even/a-subdirectory-of-it.txt`. It's especially dangerous when enabling `impatient-mode` for files like `~/.bashrc` because it allows to access any file in the user's home directory files such as `~/.ssh/id_rsa`.
-
-This behavior is not a bug, it is needed for the HTML files to work properly along with their resources (such as CSS and JS). Please be aware of what is exposed and/or configure your filewall accordingly.
+* if emacs builded with _xwidget-webkit_, previewed in other buffer on emacs.
