@@ -16,21 +16,25 @@ var resetTimeout = function() {
     next_period = min_period;
 };
 
-var frameToDocument = function( iframe ) {
-    return ( iframe.contentDocument ) ? iframe.contentDocument : iframe.Document;
-};
+// var frameToDocument = function( iframe ) {
+//     return ( iframe.contentDocument ) ? iframe.contentDocument : iframe.Document;
+// };
 
-var printIframe = function( data ) {
-    document.getElementById( 'marked' ).innerHTML = marked( data );
-};
+// var printIframe = function( data ) {
+//     document.getElementById( 'marked' ).innerHTML = marked( data );
+// };
 
-var setIframe = function( count, newText ) {
+// var setIframe = function( count, newText ) {
+var md2html = function( count, mdText ) {
     if ( !count ) {
         // error parsing client result
-        printIframe( '0', 'error parsing the response from emacs' );
+        // printIframe( '0', 'error parsing the response from emacs' );
+        document.getElementById( 'marked' ).innerHTML = 'error parsing the response from emacs';
     } else {
         current_id = count;
-        printIframe( newText );
+        // printIframe( newText );
+        document.getElementById( 'marked' ).innerHTML = marked( mdText );
+        console.log( mdText );
     }
 };
 
@@ -54,8 +58,8 @@ var refresh = function() {
     xhr.onreadystatechange = function() {
         if ( 4 == xhr.readyState ) {
             resetTimeout();
-            setIframe( xhr.getResponseHeader( 'X-Imp-Count' ),
-                       xhr.responseText );
+            md2html( xhr.getResponseHeader( 'X-Imp-Count' ),
+                     xhr.responseText );
             refresh();
         };
     };
