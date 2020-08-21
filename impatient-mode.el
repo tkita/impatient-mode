@@ -67,6 +67,17 @@ Set to nil for no delay"
 (defvar impatient-mode-map (make-sparse-keymap)
   "Keymap for impatient-mode.")
 
+(let ((map impatient-mode-map))
+  (define-key map (kbd "C-<down>") (lambda ()
+                                     (interactive)
+                                     (xwidget-webkit-scroll-up-line 1)))
+  (define-key map (kbd "C-<up>") (lambda ()
+                                   (interactive)
+                                   (xwidget-webkit-scroll-up-line -1)))
+  (define-key map (kbd "<f5>") (lambda ()
+                                 (interactive)
+                                 (xwidget-webkit-reload))))
+
 ;;;###autoload
 (define-minor-mode impatient-mode
   "Serves the buffer live over HTTP."
