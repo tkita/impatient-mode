@@ -1,28 +1,11 @@
 html {
     height: 100%;
-    padding: 12px;
+    margin: 12px;
     overflow: auto;
 }
 
-body {
-    margin: 0px;
-    padding: 8px;
-    height: 100%;
-    border: 1px solid #e1e4e8;
-    border-radius: 6px;
-}
-
-div, iframe {
+body, div {
     margin: 0px;
     padding: 0px;
     height: 100%;
-    border: none;
-}
-
-iframe {
-    display: block;
-    width: 100%;
-    border: none;
-    overflow-y: auto;
-    overflow-x: hidden;
 }
