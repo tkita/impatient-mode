@@ -165,6 +165,8 @@ If given a prefix ARG, visit the buffer listing instead."
   (with-httpd-buffer proc "text/html; charset=utf-8"
     (insert "<html><head>\n")
     (insert "<title>impatient-mode buffer list</title>\n")
+    (insert "<style>li{transition:background-color 0.3s linear;}\n")
+    (insert "li:hover{background-color:yellow;}</style>\n")
     (insert "</head><body>\n")
     (insert "<h1>Public Buffers</h1>\n<hr/>")
     (insert "<ul>\n")
