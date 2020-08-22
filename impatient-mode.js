@@ -16,6 +16,12 @@ var resetTimeout = function() {
     next_period = min_period;
 };
 
+marked.setOptions( { langPrefix: '',
+                     highlight: function( code, lang ) {
+                         return hljs.highlightAuto( code, [lang] ).value;
+                     }
+                   });
+
 var md2html = function( count, mdText ) {
     if ( !count ) {
         // error parsing client result
