@@ -5,3 +5,5 @@
 github-markdown.css
 marked.min.js
 simple-httpd.el
+highlight.pack.js
+github.css
