@@ -38,7 +38,7 @@ $ make get
 
 Add _impatient-mode_ to your load path and require it:
 
-```el
+```lisp
   (add-to-list 'load-path "~/.emacs.d/impatient-mode")
   (require 'impatient-mode)
 ```
@@ -49,15 +49,15 @@ Add _impatient-mode_ to your load path and require it:
 
 * Publish buffers for browser-preview,
 
-  ```el
+  ```
   M-x imp-visit-buffer
   ```
 
- previewing web browser specified by variable `browse-url-browser-function`.
+  previewing web browser specified by variable `browse-url-browser-function`.
 
 * If emacs builded configure option `--with-xwidgets`, previewing in other buffer on emacs.
 
-  ```el
+  ```
   system-configuration-options [C-j]
   => "--with-xwidgets"
   ```
