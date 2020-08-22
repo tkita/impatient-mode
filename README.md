@@ -3,6 +3,16 @@ Impatient Mode
 
 _This version is for markdown only._
 
+## Screenshots
+
+ * previewing by firefox.
+
+ [<img src="https://raw.githubusercontent.com/tkita/impatient-mode/screenshots/firefox.jpg" width="50%">](https://raw.githubusercontent.com/tkita/impatient-mode/screenshots/firefox.jpg)
+
+ * previewing other buffer by _xwidget-webkit_.
+
+ [<img src="https://raw.githubusercontent.com/tkita/impatient-mode/screenshots/xwidget.jpg" width="50%">](https://raw.githubusercontent.com/tkita/impatient-mode/screenshots/xwidget.jpg)
+
 ## Installation
 
 This version requires _simple-httpd.el_ , _marked.js_ , and _github-markdown.css_ .
@@ -20,28 +30,34 @@ Put follow files in the same directory.
 
   * https://github.com/sindresorhus/github-markdown-css
 
-or, you can use _get_ target in _make_ command.
+or, run command `make get`
 
-  ```shell
-  $ make get
-  ```
+```shell
+$ make get
+```
 
-you can add _impatient-mode_ to your load path and require it:
+Add _impatient-mode_ to your load path and require it:
 
-  ```el
+```el
   (add-to-list 'load-path "~/.emacs.d/impatient-mode")
   (require 'impatient-mode)
-  ```
+```
 
 ## Using _impatient-mode_
 
 * Open markdown file with emacs, and edit buffer.
 
-* Publish buffers for preview,
+* Publish buffers for browser-preview,
 
- ```el
- M-x imp-visit-buffer
- ```
- previewed in web browser specified by variable `browse-url-browser-function`.
+  ```el
+  M-x imp-visit-buffer
+  ```
 
-* if emacs builded with _xwidget-webkit_, previewed in other buffer on emacs.
+ previewing web browser specified by variable `browse-url-browser-function`.
+
+* If emacs builded configure option `--with-xwidgets`, previewing in other buffer on emacs.
+
+  ```el
+  system-configuration-options [C-j]
+  => "--with-xwidgets"
+  ```
