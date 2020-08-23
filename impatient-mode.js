@@ -16,6 +16,7 @@ var resetTimeout = function() {
     next_period = min_period;
 };
 
+// for highlight.js
 marked.setOptions( { langPrefix: '',
                      highlight: function( code, lang ) {
                          return hljs.highlightAuto( code, [lang] ).value;
@@ -29,7 +30,7 @@ var md2html = function( count, mdText ) {
     } else {
         current_id = count;
         document.getElementById( 'marked' ).innerHTML = marked( mdText );
-        console.log( mdText );
+        // console.log( mdText );
     }
 };
 
@@ -44,7 +45,7 @@ var refresh = function() {
             refresh();
         };
     };
-    xhr.onerror = function () {
+    xhr.onerror = function() {
         setTimeout( refresh, nextTimeout() );
     };
     xhr.send();
