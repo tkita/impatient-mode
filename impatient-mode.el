@@ -121,6 +121,14 @@ buffer."
      (buffer-substring-no-properties (point-min) (point-max)))
    (current-buffer)))
 
+(defun imp--xwidget-webkit-buffer ()
+  (let (r)
+    (dolist (b (buffer-list))
+      (with-current-buffer b
+        (when (string= "xwidget-webkit" (format "%s" mode-name))
+          (setq r (cons (buffer-name) r)))))
+    r))
+
 (defun imp-visit-buffer (&optional arg)
   "Visit the current buffer in a browser.
 If given a prefix ARG, visit the buffer listing instead."
@@ -141,11 +149,16 @@ If given a prefix ARG, visit the buffer listing instead."
          (url (format "http://%s:%d/imp/" host port)))
     (unless arg
       (setq url (format "%slive/%s/" url (url-hexify-string (buffer-name)))))
+
     (if (and window-system
              (featurep 'xwidget-internal))
-        (let ((win (selected-window)))
+        (let ((xwb (imp--xwidget-webkit-buffer))
+              (win (selected-window)))
+          (delete-other-windows)
           (select-window (split-window-horizontally))
           (xwidget-webkit-browse-url url)
+          (when xwb
+            (set-window-buffer (selected-window) (car xwb)))
           (select-window win))
       (browse-url url))))
 
