@@ -78,6 +78,15 @@ Set to nil for no delay"
                                  (interactive)
                                  (xwidget-webkit-reload))))
 
+(defun imp--clear-buffer-modified ()
+  (let ((xwb (imp--xwidget-webkit-buffer)))
+    (when xwb
+      (dolist (b xwb)
+        (set-buffer b)
+        (set-buffer-modified-p nil))))
+
+(add-hook 'kill-emacs-hook #'imp--clear-buffer-modified)
+
 ;;;###autoload
 (define-minor-mode impatient-mode
   "Serves the buffer live over HTTP."
