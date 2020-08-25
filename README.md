@@ -5,11 +5,11 @@ _This version is for markdown only._
 
 ## Screenshots
 
- * previewing by firefox.
+ * realtime previewing by firefox.
 
  [<img src="https://raw.githubusercontent.com/tkita/impatient-mode/screenshots/firefox.jpg" width="50%">](https://raw.githubusercontent.com/tkita/impatient-mode/screenshots/firefox.jpg)
 
- * previewing other buffer by _xwidget-webkit_.
+ * realtime previewing other buffer by _xwidget-webkit_.
 
  [<img src="https://raw.githubusercontent.com/tkita/impatient-mode/screenshots/xwidget.jpg" width="50%">](https://raw.githubusercontent.com/tkita/impatient-mode/screenshots/xwidget.jpg)
 
@@ -47,6 +47,8 @@ Add _impatient-mode_ to your load path and require it:
 
 * Open markdown file with emacs, and edit buffer.
 
+  or execute command `M-x imp-new`.
+
 * Publish buffers for browser-preview,
 
   ```
@@ -55,7 +57,7 @@ Add _impatient-mode_ to your load path and require it:
 
   previewing web browser specified by variable `browse-url-browser-function`.
 
-* If emacs builded configure option `--with-xwidgets`, previewing in other buffer on emacs.
+* If emacs builded configure option `--with-xwidgets`, previewing in other buffer by xwidget-webkit on emacs.
 
   ```
   system-configuration-options [C-j]
