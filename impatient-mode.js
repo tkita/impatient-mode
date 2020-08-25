@@ -23,34 +23,48 @@ marked.setOptions( { langPrefix: '',
                      }
                    });
 
-var md2html = function( count, mdText ) {
-    if ( !count ) {
+var md2html = function( resCount, resMarkdownText ) {
+    if ( !resCount ) {
         // error parsing client result
         document.getElementById( 'marked' ).innerHTML = 'error parsing the response from emacs';
+        xhr.onreadystatechange = function() {};
+        xhr.abort();
     } else {
-        current_id = count;
-        document.getElementById( 'marked' ).innerHTML = marked( mdText );
+        current_id = resCount;
+        document.getElementById( 'marked' ).innerHTML = marked( resMarkdownText );
         // console.log( mdText );
     }
 };
 
-var refresh = function() {
-    var xhr = new XMLHttpRequest();
+var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function() {
+    if ( 4 == xhr.readyState ) {
+        resetTimeout();
+        md2html( xhr.getResponseHeader( 'X-Imp-Count' ),
+                 xhr.responseText );
+        httpRequest();
+    } else {
+        // console.log( 'impatient-mode.js: readyState: ' + xhr.readyState );
+        // console.log( 'impatient-mode.js: status: ' + xhr.status );
+    };
+};
+
+xhr.onerror = function() {
+    if ( 4 == xhr.readyState && 0 == xhr.status ) {
+        console.log( 'impatient-mode.js: onerror'  );
+        console.log( 'impatient-mode.js: onerror.readyState: ' + xhr.readyState );
+        console.log( 'impatient-mode.js: onerror.status: ' + xhr.status );
+        xhr.abort();
+    } else {
+        setTimeout( httpRequest, nextTimeout() );
+    };
+};
+
+var httpRequest = function() {
     xhr.open( 'GET', '/imp/buffer/' + buffer + '?id=' + current_id );
-    xhr.onreadystatechange = function() {
-        if ( 4 == xhr.readyState ) {
-            resetTimeout();
-            md2html( xhr.getResponseHeader( 'X-Imp-Count' ),
-                     xhr.responseText );
-            refresh();
-        };
-    };
-    xhr.onerror = function() {
-        setTimeout( refresh, nextTimeout() );
-    };
     xhr.send();
 };
 
 document.addEventListener( 'DOMContentLoaded', function() {
-    refresh();
+    httpRequest();
 });
