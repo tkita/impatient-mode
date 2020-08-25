@@ -49,6 +49,41 @@ Set to nil for no delay"
   :group 'impatient
   :type 'sexp)
 
+(defcustom imp-new-template
+  "Markdown document
+=================
+
+# Installation
+
+1. aa
+
+2. bb
+
+# Using
+
+* settings
+
+  ```lisp
+  (setq foo \"bar\")  ; comment
+  ```
+
+* bb
+
+  | a1 | b1 | c1 | d1 |
+  |----|----|----|----|
+  | a2 | b2 | c2 | d2 |
+  | a3 | b3 | c3 | d3 |
+
+# Security
+
+  - [x] aabbcc
+  - [ ] ddeeff
+
+"
+ "Strings of template for new document."
+  :group 'impatient
+  :type 'string)
+
 (defvar-local imp--idle-timer nil
   "A timer that goes off after `impatient-mode-delay' seconds of inactivity")
 
@@ -68,15 +103,9 @@ Set to nil for no delay"
   "Keymap for impatient-mode.")
 
 (let ((map impatient-mode-map))
-  (define-key map (kbd "C-<down>") (lambda ()
-                                     (interactive)
-                                     (xwidget-webkit-scroll-up-line 1)))
-  (define-key map (kbd "C-<up>") (lambda ()
-                                   (interactive)
-                                   (xwidget-webkit-scroll-up-line -1)))
-  (define-key map (kbd "<f5>") (lambda ()
-                                 (interactive)
-                                 (xwidget-webkit-reload))))
+  (define-key map (kbd "C-<down>") (lambda () (interactive) (xwidget-webkit-scroll-up-line 1)))
+  (define-key map (kbd "C-<up>")   (lambda () (interactive) (xwidget-webkit-scroll-up-line -1)))
+  (define-key map (kbd "<f5>")     (lambda () (interactive) (xwidget-webkit-reload))))
 
 (defun imp--clear-buffer-modified ()
   (let ((xwb (imp--xwidget-webkit-buffer)))
@@ -174,38 +203,9 @@ If given a prefix ARG, visit the buffer listing instead."
 ;;;###autoload
 (defun imp-new ()
   (interactive)
-  (let ((buffer (get-buffer-create "new markdown doc")))
+  (let ((buffer (get-buffer-create "README.md")))
     (with-current-buffer buffer
-      (insert "Markdown document
-=================
-
-# Installation
-
-1. aa
-
-2. bb
-
-# Using
-
-* settings
-
-  ```lisp
-  (setq foo \"bar\")  ; comment
-  ```
-
-* bb
-
-  | a1 | b1 | c1 | d1 |
-  |----|----|----|----|
-  | a2 | b2 | c2 | d2 |
-  | a3 | b3 | c3 | d3 |
-
-# Security
-
-  - [x] aabbcc
-  - [ ] ddeeff
-
-")
+      (insert imp-new-template)
       (goto-char (point-min))
       (markdown-mode)
       (pop-to-buffer buffer))))
