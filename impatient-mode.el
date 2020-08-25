@@ -83,7 +83,7 @@ Set to nil for no delay"
     (when xwb
       (dolist (b xwb)
         (set-buffer b)
-        (set-buffer-modified-p nil))))
+        (set-buffer-modified-p nil)))))
 
 (add-hook 'kill-emacs-hook #'imp--clear-buffer-modified)
 
