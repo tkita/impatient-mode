@@ -171,6 +171,45 @@ If given a prefix ARG, visit the buffer listing instead."
           (select-window win))
       (browse-url url))))
 
+;;;###autoload
+(defun imp-new ()
+  (interactive)
+  (let ((buffer (get-buffer-create "new markdown doc")))
+    (with-current-buffer buffer
+      (insert "Markdown document
+=================
+
+# Installation
+
+1. aa
+
+2. bb
+
+# Using
+
+* settings
+
+  ```lisp
+  (setq foo \"bar\")  ; comment
+  ```
+
+* bb
+
+  | a1 | b1 | c1 | d1 |
+  |----|----|----|----|
+  | a2 | b2 | c2 | d2 |
+  | a3 | b3 | c3 | d3 |
+
+# Security
+
+  - [x] aabbcc
+  - [ ] ddeeff
+
+")
+      (goto-char (point-min))
+      (markdown-mode)
+      (pop-to-buffer buffer))))
+
 (defun imp-buffer-enabled-p (buffer)
   "Return t if BUFFER has impatient-mode enabled."
   (and buffer (with-current-buffer (get-buffer buffer) impatient-mode)))
