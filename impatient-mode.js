@@ -18,11 +18,10 @@ var resetTimeout = function() {
 
 // for highlight.js
 marked.setOptions( { langPrefix: '',
-                     highlight: function( code, lang ) {
-                         return hljs.highlightAuto( code, [lang] ).value;
-                     }
+                     // highlight: function( code, lang ) {
+                     //     return hljs.highlightAuto( code, [lang] ).value;
+                     // }
                    });
-
 
 var renderer = new marked.Renderer();
 renderer.code = function( code, lang ) {
@@ -44,6 +43,7 @@ var md2html = function( resCount, resMarkdownText ) {
         document.getElementById( 'marked' ).innerHTML = marked( resMarkdownText,
                                                                 { renderer: renderer }
                                                               );
+        hljs.initHighlighting();
         mermaid.init();
         // console.log( mdText );
     }
