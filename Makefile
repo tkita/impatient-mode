@@ -40,5 +40,7 @@ run: impatient-mode.elc
 
 get:
 	$(CURL) github-markdown.css $(GITHUB)/sindresorhus/github-markdown-css/gh-pages/github-markdown.css
-	$(CURL) marked.min.js $(GITHUB)/markedjs/marked/master/marked.min.js
-	$(CURL) simple-httpd.el $(GITHUB)/skeeto/emacs-web-server/master/simple-httpd.el
+	$(CURL) marked.min.js      $(GITHUB)/markedjs/marked/master/marked.min.js
+	$(CURL) simple-httpd.el    $(GITHUB)/skeeto/emacs-web-server/master/simple-httpd.el
+	$(CURL) mermaid.min.js     $(GITHUB)/mermaid-js/mermaid/develop/dist/mermaid.min.js
+	$(CURL) mermaid.min.js.map $(GITHUB)/mermaid-js/mermaid/develop/dist/mermaid.min.js.map

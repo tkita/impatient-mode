@@ -23,6 +23,16 @@ marked.setOptions( { langPrefix: '',
                      }
                    });
 
+
+var renderer = new marked.Renderer();
+renderer.code = function( code, lang ) {
+    if ( 'mermaid' == lang ) {
+        return '<pre class="mermaid">' + code + '</pre>';
+    } else {
+        return '<pre><code>' + code + '</code></pre>';
+    };
+};
+
 var md2html = function( resCount, resMarkdownText ) {
     if ( !resCount ) {
         // error parsing client result
@@ -31,7 +41,10 @@ var md2html = function( resCount, resMarkdownText ) {
         xhr.abort();
     } else {
         current_id = resCount;
-        document.getElementById( 'marked' ).innerHTML = marked( resMarkdownText );
+        document.getElementById( 'marked' ).innerHTML = marked( resMarkdownText,
+                                                                { renderer: renderer }
+                                                              );
+        mermaid.init();
         // console.log( mdText );
     }
 };
