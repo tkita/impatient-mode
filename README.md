@@ -15,7 +15,8 @@ _This version is for markdown only._
 
 ## Installation
 
-This version requires _simple-httpd.el_ , _marked.js_ , and _github-markdown.css_ .
+This version requires _simple-httpd.el_ , _marked.js_ , _github-markdown.css_ and
+_mermaid.js_ .
 Put follow files in the same directory.
 
 - simple-httpd.el
@@ -29,6 +30,10 @@ Put follow files in the same directory.
 - github-markdown.css
 
   * https://github.com/sindresorhus/github-markdown-css
+
+- mermaid.js
+
+  * https://github.com/mermaid-js/mermaid
 
 or, run command `make get`
 
@@ -57,7 +62,7 @@ Add _impatient-mode_ to your load path and require it:
 
   previewing web browser specified by variable `browse-url-browser-function`.
 
-* If emacs builded configure option `--with-xwidgets`, previewing in other buffer by xwidget-webkit on emacs.
+* If emacs builded configure option `--with-xwidgets`, previewing in other buffer by _xwidget-webkit_ on emacs.
 
   ```
   system-configuration-options [C-j]
