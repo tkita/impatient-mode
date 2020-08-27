@@ -120,10 +120,16 @@ gantt
 (defvar impatient-mode-map (make-sparse-keymap)
   "Keymap for impatient-mode.")
 
-(let ((map impatient-mode-map))
-  (define-key map (kbd "C-<down>") (lambda () (interactive) (xwidget-webkit-scroll-up-line 1)))
-  (define-key map (kbd "C-<up>")   (lambda () (interactive) (xwidget-webkit-scroll-up-line -1)))
-  (define-key map (kbd "<f5>")     (lambda () (interactive) (xwidget-webkit-reload))))
+(defconst imp--enable-xwidget-webkit--p
+  (and window-system
+       (featurep 'xwidget-internal))
+  "If non-nil, enabled xwidget-webkit.")
+
+(when imp--enable-xwidget-webkit--p
+  (let ((map impatient-mode-map))
+    (define-key map (kbd "C-<down>") (lambda () (interactive) (xwidget-webkit-scroll-up-line 1)))
+    (define-key map (kbd "C-<up>")   (lambda () (interactive) (xwidget-webkit-scroll-up-line -1)))
+    (define-key map (kbd "<f5>")     (lambda () (interactive) (xwidget-webkit-reload)))))
 
 (defun imp--clear-buffer-modified ()
   (let ((xwb (imp--xwidget-webkit-buffer)))
@@ -208,8 +214,7 @@ If given a prefix ARG, visit the buffer listing instead."
     (unless arg
       (setq url (format "%slive/%s/" url (url-hexify-string (buffer-name)))))
 
-    (if (and window-system
-             (featurep 'xwidget-internal))
+    (if imp--enable-xwidget-webkit--p
         (let ((xwb (imp--xwidget-webkit-buffer))
               (win (selected-window)))
           (delete-other-windows)
