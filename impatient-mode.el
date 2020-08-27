@@ -140,10 +140,12 @@ gantt
   :group 'impatient
   :lighter " imp"
   :keymap impatient-mode-map
-  (if (not impatient-mode)
+  (if (not impatient-mode)              ; executed after toggling the mode
+      ;; t-> nil
       (progn
         (imp--cleanup-timer)
         (remove-hook 'after-change-functions #'imp--on-change t))
+    ;; nil -> t
     (add-hook 'kill-buffer-hook #'imp--cleanup-timer nil t)
     (add-hook 'after-change-functions #'imp--on-change nil t)
     (imp-remove-user-filter)))
