@@ -221,12 +221,12 @@ If given a prefix ARG, visit the buffer listing instead."
 ;;;###autoload
 (defun imp-new ()
   (interactive)
-  (let ((buffer (get-buffer-create "README.md")))
+  (let ((buffer (get-buffer-create (format "%s.SureSave.md" (make-temp-name "")))))
     (with-current-buffer buffer
       (insert imp-new-template)
       (goto-char (point-min))
       (markdown-mode)
-      (pop-to-buffer buffer))))
+      (switch-to-buffer buffer))))
 
 (defun imp-buffer-enabled-p (buffer)
   "Return t if BUFFER has impatient-mode enabled."
