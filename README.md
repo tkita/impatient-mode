@@ -13,6 +13,10 @@ _This version is for markdown only._
 
  [<img src="https://raw.githubusercontent.com/tkita/impatient-mode/screenshots/xwidget.jpg" width="50%">](https://raw.githubusercontent.com/tkita/impatient-mode/screenshots/xwidget.jpg)
 
+ * on MS Windows
+
+ [<img src="https://raw.githubusercontent.com/tkita/impatient-mode/screenshots/mswindows.jpg" width="50%">](https://raw.githubusercontent.com/tkita/impatient-mode/screenshots/mswindows.jpg)
+
 ## Installation
 
 This version requires _simple-httpd.el_ , _marked.js_ , _github-markdown.css_ and
