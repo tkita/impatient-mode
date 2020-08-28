@@ -72,3 +72,21 @@ Add _impatient-mode_ to your load path and require it:
   system-configuration-options [C-j]
   => "--with-xwidgets"
   ```
+
+* key operation of emacs also works with web browser.
+
+  - xwidget-webkit
+
+    | impatient-mode/emacs | xwidget-webkit-mode/emacs          |
+    |----------------------|------------------------------------|
+    | C-\<up\>             | (xwidget-webkit-scroll-up-line -1) |
+    | C-\<down\>           | (xwidget-webkit-scroll-up-line 1)  |
+
+  - other browser
+
+    | impatient-mode/emacs                | web browser                   |
+    |-------------------------------------|-------------------------------|
+    | M-< (beginning-of-buffer)           | window.scrollTo( 0, 0 );      |
+    | M-> (end-of-buffer)                 | window.scrollTo( 0, bottom ); |
+    | M-p (imp-browser-scroll-up-line -1) | window.scrollByLines();       |
+    | M-n (imp-browser-scroll-up-line 1)  | window.scrollByLines();       |
