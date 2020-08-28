@@ -49,9 +49,21 @@ var xhr = new XMLHttpRequest();
 xhr.onreadystatechange = function() {
     if ( 4 == xhr.readyState ) {
         resetTimeout();
+
         if ( typeof window.scrollByLines == 'function' ) {
             window.scrollByLines( xhr.getResponseHeader( 'X-Imp-Scroll' ));
         };
+
+        var g = xhr.getResponseHeader( 'X-Imp-Goto' );
+        if ( 'nil' != g ) {
+            if ( 'top' == g ) {
+                window.scrollTo( 0, 0 );
+            } else {
+                var e = document.documentElement;
+                window.scroll( 0, e.scrollHeight - e.clientHeight );
+            };
+        };
+
         md2html( xhr.getResponseHeader( 'X-Imp-Count' ),
                  xhr.responseText );
         httpRequest();
