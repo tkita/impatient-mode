@@ -18,9 +18,6 @@ var resetTimeout = function() {
 
 // for highlight.js
 marked.setOptions( { langPrefix: '',
-                     // highlight: function( code, lang ) {
-                     //     return hljs.highlightAuto( code, [lang] ).value;
-                     // }
                    });
 
 var renderer = new marked.Renderer();
@@ -45,7 +42,6 @@ var md2html = function( resCount, resMarkdownText ) {
                                                               );
         hljs.initHighlighting();
         mermaid.init();
-        // console.log( mdText );
     }
 };
 
