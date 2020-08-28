@@ -125,11 +125,28 @@ gantt
        (featurep 'xwidget-internal))
   "If non-nil, enabled xwidget-webkit.")
 
-(when imp--enable-xwidget-webkit--p
-  (let ((map impatient-mode-map))
-    (define-key map (kbd "C-<down>") (lambda () (interactive) (xwidget-webkit-scroll-up-line 1)))
-    (define-key map (kbd "C-<up>")   (lambda () (interactive) (xwidget-webkit-scroll-up-line -1)))
-    (define-key map (kbd "<f5>")     (lambda () (interactive) (xwidget-webkit-reload)))))
+(defvar imp-scroll-lines 2)
+
+(defun imp-browser-scroll (lines)
+  (cl-incf imp-last-state)
+  (while imp-client-list
+    (imp--send-state (pop imp-client-list) lines)))
+
+(let ((map impatient-mode-map))
+  (cond (imp--enable-xwidget-webkit--p
+         (define-key map (kbd "C-<down>")
+           (lambda () (interactive) (xwidget-webkit-scroll-up-line 1)))
+         (define-key map (kbd "C-<up>")
+           (lambda () (interactive) (xwidget-webkit-scroll-up-line -1)))
+         (define-key map (kbd "<f5>")
+           (lambda () (interactive) (xwidget-webkit-reload))))
+
+        (t
+         (define-key map (kbd "M-n")
+           (lambda () (interactive) (imp-browser-scroll imp-scroll-lines)))
+         (define-key map (kbd "M-p")
+           (lambda () (interactive) (imp-browser-scroll (* -1 imp-scroll-lines))))
+         )))
 
 (defun imp--clear-buffer-modified ()
   (let ((xwb (imp--xwidget-webkit-buffer)))
@@ -320,7 +337,7 @@ If given a prefix ARG, visit the buffer listing instead."
    ((equal path "/imp/") (imp-serve-buffer-list proc))
    (t (httpd-error proc 403 (format "%s not found" path)))))
 
-(defun imp--send-state (proc)
+(defun imp--send-state (proc &optional lines)
   (let ((id (number-to-string imp-last-state))
         (user-filter imp-user-filter)
         (buffer (current-buffer)))
@@ -329,9 +346,14 @@ If given a prefix ARG, visit the buffer listing instead."
         (if user-filter
             (funcall user-filter buffer)
           (insert-buffer-substring buffer))
-        (httpd-send-header proc "text/html" 200
-                           :Cache-Control "no-cache"
-                           :X-Imp-Count id)))))
+        (if lines
+            (httpd-send-header proc "text/html" 200
+                               :Cache-Control "no-cache"
+                               :X-Imp-Scroll lines
+                               :X-Imp-Count id)
+          (httpd-send-header proc "text/html" 200
+                             :Cache-Control "no-cache"
+                             :X-Imp-Count id))))))
 
 (defun imp--send-state-ignore-errors (proc)
   (condition-case _
