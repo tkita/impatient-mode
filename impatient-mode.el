@@ -125,17 +125,18 @@ gantt
        (featurep 'xwidget-internal))
   "If non-nil, enabled xwidget-webkit.")
 
-(defvar imp-scroll-lines 2)
+(defvar imp-browser-scroll-lines 3)
 
-(defun imp-browser-scroll (lines)
+(defun imp-browser-scroll-up-line (direction)
   (cl-incf imp-last-state)
   (while imp-client-list
-    (imp--send-state (pop imp-client-list) lines)))
+    (imp--send-state (pop imp-client-list)
+                     (* direction imp-browser-scroll-lines))))
 
 (let ((map impatient-mode-map))
   (cond (imp--enable-xwidget-webkit--p
          (define-key map (kbd "C-<down>")
-           (lambda () (interactive) (xwidget-webkit-scroll-up-line 1)))
+           (lambda () (interactive) (xwidget-webkit-scroll-up-line  1)))
          (define-key map (kbd "C-<up>")
            (lambda () (interactive) (xwidget-webkit-scroll-up-line -1)))
          (define-key map (kbd "<f5>")
@@ -143,9 +144,9 @@ gantt
 
         (t
          (define-key map (kbd "M-n")
-           (lambda () (interactive) (imp-browser-scroll imp-scroll-lines)))
+           (lambda () (interactive) (imp-browser-scroll-up-line  1)))
          (define-key map (kbd "M-p")
-           (lambda () (interactive) (imp-browser-scroll (* -1 imp-scroll-lines))))
+           (lambda () (interactive) (imp-browser-scroll-up-line -1)))
          )))
 
 (defun imp--clear-buffer-modified ()
@@ -346,14 +347,10 @@ If given a prefix ARG, visit the buffer listing instead."
         (if user-filter
             (funcall user-filter buffer)
           (insert-buffer-substring buffer))
-        (if lines
-            (httpd-send-header proc "text/html" 200
-                               :Cache-Control "no-cache"
-                               :X-Imp-Scroll lines
-                               :X-Imp-Count id)
-          (httpd-send-header proc "text/html" 200
-                             :Cache-Control "no-cache"
-                             :X-Imp-Count id))))))
+        (httpd-send-header proc "text/html" 200
+                           :Cache-Control "no-cache"
+                           :X-Imp-Scroll lines
+                           :X-Imp-Count id)))))
 
 (defun imp--send-state-ignore-errors (proc)
   (condition-case _

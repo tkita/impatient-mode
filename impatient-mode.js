@@ -49,9 +49,8 @@ var xhr = new XMLHttpRequest();
 xhr.onreadystatechange = function() {
     if ( 4 == xhr.readyState ) {
         resetTimeout();
-        var s = xhr.getResponseHeader( 'X-Imp-Scroll' );
-        if ( s ) {
-            window.scrollByLines( s );
+        if ( typeof window.scrollByLines == 'function' ) {
+            window.scrollByLines( xhr.getResponseHeader( 'X-Imp-Scroll' ));
         };
         md2html( xhr.getResponseHeader( 'X-Imp-Count' ),
                  xhr.responseText );
