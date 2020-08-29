@@ -131,17 +131,18 @@ gantt
   (cl-incf imp-last-state)
   (while imp-client-list
     (imp--send-state (pop imp-client-list)
-                     (* direction imp-browser-scroll-lines))))
+                     (format "Scroll/%s" (* direction imp-browser-scroll-lines)))))
+
 
 (defun imp-browser-scrollto (pos)
   (cl-incf imp-last-state)
   (while imp-client-list
     (imp--send-state (pop imp-client-list)
-                     nil pos)))
+                     (format "Goto/%s" pos))))
 
 (let ((map impatient-mode-map))
   (define-key map (kbd "M-<")
-    (lambda () (interactive) (imp-browser-scrollto "top") (beginning-of-buffer)))
+    (lambda () (interactive) (imp-browser-scrollto "Top") (beginning-of-buffer)))
   (define-key map (kbd "M->")
     (lambda () (interactive) (imp-browser-scrollto "bottom") (end-of-buffer)))
 
@@ -349,7 +350,7 @@ If given a prefix ARG, visit the buffer listing instead."
    ((equal path "/imp/") (imp-serve-buffer-list proc))
    (t (httpd-error proc 403 (format "%s not found" path)))))
 
-(defun imp--send-state (proc &optional lines scrollto)
+(defun imp--send-state (proc &optional props)
   (let ((id (number-to-string imp-last-state))
         (user-filter imp-user-filter)
         (buffer (current-buffer)))
@@ -360,8 +361,7 @@ If given a prefix ARG, visit the buffer listing instead."
           (insert-buffer-substring buffer))
         (httpd-send-header proc "text/html" 200
                            :Cache-Control "no-cache"
-                           :X-Imp-Scroll lines
-                           :X-Imp-Goto scrollto
+                           :X-Imp-Ctrl props
                            :X-Imp-Count id)))))
 
 (defun imp--send-state-ignore-errors (proc)
