@@ -63,6 +63,10 @@ xhr.onreadystatechange = function() {
                     window.scroll( 0, e.scrollHeight - e.clientHeight );
                 };
                 break;
+            case 'Recenter':
+                window.scroll( 0, document.documentElement.scrollHeight *
+                               parseFloat( props ));
+                break;
             case 'Scroll':
                 if ( typeof window.scrollByLines == 'function' ) {
                     window.scrollByLines( props );
