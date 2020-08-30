@@ -144,7 +144,6 @@ gantt
     (imp--send-state (pop imp-client-list)
                      (format "Scroll/%s" (* direction imp-browser-scroll-lines)))))
 
-
 (defun imp-browser-scrollto (pos)
   (cl-incf imp-last-state)
   (while imp-client-list
@@ -157,17 +156,17 @@ gantt
     (imp--send-state (pop imp-client-list)
                      (format "Recenter/%s" pos))))
 
-(defun get-pos ()
-  (format "0.%d" (* 100 (/ (float (point))
-                         (float (save-excursion (end-of-buffer) (point)))))))
-
 (let ((map impatient-mode-map))
   (define-key map (kbd "M-<")
     (lambda () (interactive) (imp-browser-scrollto "Top") (beginning-of-buffer)))
   (define-key map (kbd "M->")
     (lambda () (interactive) (imp-browser-scrollto "bottom") (end-of-buffer)))
   (define-key map (kbd "C-l")
-    (lambda () (interactive) (imp-browser-recenter (get-pos)) (recenter-top-bottom)))
+    (lambda ()
+      (interactive)
+      (imp-browser-recenter (format "0.%d" (* 100 (/ (float (point))
+                                                     (float (save-excursion (end-of-buffer) (point)))))))
+      (recenter-top-bottom)))
 
   (cond (imp--enable-xwidget-webkit--p
          (define-key map (kbd "C-<down>")
