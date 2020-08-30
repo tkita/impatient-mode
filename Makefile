@@ -12,7 +12,7 @@ LDFLAGS = -L ../simple-httpd -L ../htmlize
 VERSION = 1.1
 GITHUB  = https://raw.githubusercontent.com
 
-DIST = README.md loading.html jquery.js index.html
+DIST = README.md index.html index.css impatient-mode.js
 
 all: compile
 
