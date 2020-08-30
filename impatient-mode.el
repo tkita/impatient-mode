@@ -268,10 +268,11 @@ If given a prefix ARG, visit the buffer listing instead."
       (setq url (format "%slive/%s/" url (url-hexify-string (buffer-name)))))
 
     (if imp--enable-xwidget-webkit--p
-        (let ((buf (current-buffer)))
-          (xwidget-webkit-browse-url url)
+        (let ((buf (current-buffer))
+              (buf-xw (progn (xwidget-webkit-browse-url url)
+                             (current-buffer))))
           (set-window-buffer (selected-window) buf)
-          (display-buffer-in-side-window (get-buffer (car (imp--xwidget-webkit-buffer)))
+          (display-buffer-in-side-window buf-xw
                                          `((side . ,imp-xwidget-webkit-display-side)
                                            (window-width . (* (frame-width) imp-xwidget-webkit-display-ratio)))))
       (browse-url url))))
