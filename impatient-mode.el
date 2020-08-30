@@ -278,14 +278,14 @@ If given a prefix ARG, visit the buffer listing instead."
       (browse-url url))))
 
 ;;;###autoload
-(defun imp-new ()
-  (interactive)
-  (let ((buffer (get-buffer-create (format "%s.SureSave.md" (make-temp-name "")))))
-    (with-current-buffer buffer
-      (insert imp-new-template)
-      (goto-char (point-min))
-      (markdown-mode)
-      (switch-to-buffer buffer))))
+(defun imp-new (filename)
+  (interactive "FNew markdown file: ")
+    (pop-to-buffer-same-window
+     (with-current-buffer (find-file-noselect filename)
+       (insert imp-new-template)
+       (goto-char (point-min))
+       (markdown-mode)
+       (current-buffer))))
 
 (defun imp-buffer-enabled-p (buffer)
   "Return t if BUFFER has impatient-mode enabled."
