@@ -45,6 +45,28 @@ var md2html = function( resCount, resMarkdownText ) {
     }
 };
 
+var impCtrl = {
+    'Goto': function( props ) {
+        if ( 'Top' == props ) {
+            window.scrollTo( 0, 0 );
+        } else {
+            var e = document.documentElement;
+            window.scroll( 0, e.scrollHeight - e.clientHeight );
+        };
+    },
+
+    'Recenter': function( props ) {
+        window.scroll( 0, document.documentElement.scrollHeight *
+                       parseFloat( props ));
+    },
+
+    'Scroll': function( props ) {
+        if ( typeof window.scrollByLines == 'function' ) {
+            window.scrollByLines( props );
+        };
+    },
+};
+
 var xhr = new XMLHttpRequest();
 xhr.onreadystatechange = function() {
     if ( 4 == xhr.readyState ) {
@@ -52,27 +74,8 @@ xhr.onreadystatechange = function() {
 
         var ctrl = xhr.getResponseHeader( 'X-Imp-Ctrl' );
         if ( 'nil' != ctrl ) {
-            var method = ctrl.split( '/' )[0];
-            var props = ctrl.split( '/' )[1];
-            switch ( method ) {
-            case 'Goto':
-                if ( 'Top' == props ) {
-                    window.scrollTo( 0, 0 );
-                } else {
-                    var e = document.documentElement;
-                    window.scroll( 0, e.scrollHeight - e.clientHeight );
-                };
-                break;
-            case 'Recenter':
-                window.scroll( 0, document.documentElement.scrollHeight *
-                               parseFloat( props ));
-                break;
-            case 'Scroll':
-                if ( typeof window.scrollByLines == 'function' ) {
-                    window.scrollByLines( props );
-                };
-                break;
-            }};
+            impCtrl[ ctrl.split( '/' )[0] ]( ctrl.split( '/' )[1] );
+        };
 
         md2html( xhr.getResponseHeader( 'X-Imp-Count' ),
                  xhr.responseText );
