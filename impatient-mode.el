@@ -102,6 +102,17 @@ gantt
   :group 'impatient
   :type 'string)
 
+(defcustom imp-xwidget-webkit-display-side 'right
+  ""
+  :group 'impatient
+  :type '(choice (const left)
+                 (const right)))
+
+(defcustom imp-xwidget-webkit-display-ratio 0.5
+  ""
+  :group 'impatient
+  :type 'number)
+
 (defvar-local imp--idle-timer nil
   "A timer that goes off after `impatient-mode-delay' seconds of inactivity")
 
@@ -257,14 +268,12 @@ If given a prefix ARG, visit the buffer listing instead."
       (setq url (format "%slive/%s/" url (url-hexify-string (buffer-name)))))
 
     (if imp--enable-xwidget-webkit--p
-        (let ((xwb (imp--xwidget-webkit-buffer))
-              (win (selected-window)))
-          (delete-other-windows)
-          (select-window (split-window-horizontally))
+        (let ((buf (current-buffer)))
           (xwidget-webkit-browse-url url)
-          (when xwb
-            (set-window-buffer (selected-window) (car xwb)))
-          (select-window win))
+          (set-window-buffer (selected-window) buf)
+          (display-buffer-in-side-window (get-buffer (car (imp--xwidget-webkit-buffer)))
+                                         `((side . ,imp-xwidget-webkit-display-side)
+                                           (window-width . (* (frame-width) imp-xwidget-webkit-display-ratio)))))
       (browse-url url))))
 
 ;;;###autoload
