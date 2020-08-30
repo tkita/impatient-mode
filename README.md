@@ -73,7 +73,15 @@ Add _impatient-mode_ to your load path and require it:
   => "--with-xwidgets"
   ```
 
-* key operation of emacs also works with web browser.
+* key operation of emacs also works with web browser via http-header `X-Imp-Ctrl:`.
+
+  - common
+
+    | impatient-mode/emacs      | xwidget-webkit, web browser   |
+    |---------------------------|-------------------------------|
+    | M-< (beginning-of-buffer) | window.scrollTo( 0, 0 );      |
+    | M-> (end-of-buffer)       | window.scrollTo( 0, bottom ); |
+    | C-l (recenter-top-bottom) | window.scrollTo( 0, <br>&nbsp;&nbsp;documentElement.scrollHeight *<br>&nbsp;&nbsp;(/ (point) (point-max)) ); |
 
   - xwidget-webkit
 
@@ -86,7 +94,5 @@ Add _impatient-mode_ to your load path and require it:
 
     | impatient-mode/emacs                | web browser                   |
     |-------------------------------------|-------------------------------|
-    | M-< (beginning-of-buffer)           | window.scrollTo( 0, 0 );      |
-    | M-> (end-of-buffer)                 | window.scrollTo( 0, bottom ); |
     | M-p (imp-browser-scroll-up-line -1) | window.scrollByLines();       |
     | M-n (imp-browser-scroll-up-line 1)  | window.scrollByLines();       |
